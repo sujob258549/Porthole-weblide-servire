@@ -1,16 +1,17 @@
 const express = require('express')
 const cors = require('cors');
 const app = express()
-const port = process.env.PORT|| 3000
+const port = process.env.PORT || 3000
 
 
 
 app.use(express.json())
 app.use(cors({
-    origin: [
-        'http://localhost:5173'
-    ],
-    credentials: true
+  origin: [
+    'http://localhost:5173',
+    'https://sujon-portfolio.surge.sh'
+  ],
+  credentials: true
 }))
 const { MongoClient, ServerApiVersion } = require('mongodb');
 const uri = "mongodb+srv://portfolio:58Bv8MRtAKOaVMEx@atlascluster.aasa6jh.mongodb.net/?retryWrites=true&w=majority&appName=AtlasCluster";
@@ -26,17 +27,22 @@ async function run() {
   try {
     const contactColection = client.db('portfolio-websid').collection('user')
 
-app.post('/contactus', async(req,res)=>{
-    const data = req.body;
-    const result = await contactColection.insertOne(data);
-    res.send(result);
+    app.post('/contactus', async (req, res) => {
+      const data = req.body;
+      const result = await contactColection.insertOne(data);
+      res.send(result);
 
-})
- 
+    })
+
+    app.get('/contactuser', async(req, res)=>{
+      const result = await contactColection.find().toArray()
+      res.send(result)
+    })
+
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
   } finally {
     // Ensures that the client will close when you finish/error
-   
+
   }
 }
 run().catch(console.dir);
